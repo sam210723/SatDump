@@ -2,7 +2,7 @@
 #include "logger.h"
 #include "core/module.h"
 
-#include "gk2a/module_gk2a_lrit_data_decoder.h"
+#include "gk2a/lrit/module_gk2a_lrit_data_decoder.h"
 
 class GK2ASupport : public satdump::Plugin
 {
