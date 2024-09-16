@@ -8,7 +8,7 @@
 #include "common/lrit/lrit_demux.h"
 #include "lrit_header.h"
 #include "resources.h"
-#include "key_decryptor.h"
+#include "gk2a/crypto/key_decryptor.h"
 #include "libs/miniz/miniz.h"
 #include "libs/miniz/miniz_zip.h"
 #include "init.h"
@@ -105,7 +105,7 @@ namespace gk2a
                                 logger->info("Extracted!");
 
                                 // Decrypt
-                                if (!decrypt_key_file(out_enc, "001F2904C905", out_dec))
+                                if (!gk2a::crypto::decrypt_key_file(out_enc, "001F2904C905", out_dec))
                                     key_path = out_dec;
 
                                 if (std::filesystem::exists(out_enc))
