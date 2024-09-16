@@ -50,7 +50,8 @@ namespace aws
             {
                 std::vector<ccsds::CCSDSPacket> ccsdsFrames = demuxer_vcid3.work(cadu);
                 for (ccsds::CCSDSPacket &pkt : ccsdsFrames)
-                    sterna_reader.work(pkt);
+                    if(pkt.header.apid == 100)
+                        sterna_reader.work(pkt);
             }
 
             progress = data_in.tellg();
@@ -112,7 +113,7 @@ namespace aws
             sterna_products.set_timestamps(sterna_reader.timestamps);
             sterna_products.set_proj_cfg(loadJsonFile(resources::getResourcePath("projections_settings/aws_sterna.json")));
 
-            for (int i = 0; i < 17; i++)
+            for (int i = 0; i < 19; i++)
                 sterna_products.images.push_back({"STERNA-" + std::to_string(i + 1), std::to_string(i + 1), sterna_reader.getChannel(i)});
 
             sterna_products.save(directory);
