@@ -239,5 +239,46 @@
                 }
             }
         }
+    },
+    "gk2a_uhrit": {
+        "name": "GK-2A UHRIT",
+        "live": true,
+        "live_cfg": {
+            "pkt_size": 20480,
+            "default":[
+                [
+                    1,
+                    0
+                ],
+                [
+                    2,
+                    0
+                ]
+            ]
+        },
+        "frequencies": [
+            [
+                "UHRIT",
+                8070.0e6
+            ]
+        ],
+        "work": {
+            "baseband": {},
+            "bbframe": {
+                "dvbs2_demod": {
+                    "symbolrate": 15.621e6,
+                    "rrc_alpha": 0.25,
+                    "pll_bw": 0.005,
+                    "modcod": 13,
+                    "mt_bch": true,
+                    "clock_alpha": 1.0e-3,
+                    "shortframes": false,
+                    "pilots": true
+                }
+            },
+            "cadu": {
+                "gk2a_uhrit_cadu_extractor": {}
+            }
+        }
     }
 }

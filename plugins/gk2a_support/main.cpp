@@ -3,6 +3,7 @@
 #include "core/module.h"
 
 #include "gk2a/lrit/module_gk2a_lrit_data_decoder.h"
+#include "gk2a/uhrit/module_gk2a_uhrit_cadu_extractor.h"
 
 class GK2ASupport : public satdump::Plugin
 {
@@ -20,6 +21,7 @@ public:
     static void registerPluginsHandler(const RegisterModulesEvent &evt)
     {
         REGISTER_MODULE_EXTERNAL(evt.modules_registry, gk2a::lrit::GK2ALRITDataDecoderModule);
+        REGISTER_MODULE_EXTERNAL(evt.modules_registry, gk2a::uhrit::GK2AUHRITCADUextractor);
     }
 };
 
