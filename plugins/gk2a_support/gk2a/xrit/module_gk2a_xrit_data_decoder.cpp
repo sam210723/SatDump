@@ -70,7 +70,7 @@ namespace gk2a
 
             time_t lastTime = 0;
 
-            uint8_t cadu[1024];
+            uint8_t cadu[2048]; // Doubled to fit UHRIT CADUs
 
             logger->warn("All credits for decoding GK-2A encrypted xRIT files goes to @sam210723, and xrit-rx over on Github.");
             logger->warn("See https://vksdr.com/xrit-rx for a lot more information!");
@@ -220,9 +220,9 @@ namespace gk2a
             {
                 // Read buffer
                 if (input_data_type == DATA_FILE)
-                    data_in.read((char *)&cadu, 1024);
+                    data_in.read((char *)&cadu, is_uhrit ? 2048 : 1024);
                 else
-                    input_fifo->read((uint8_t *)&cadu, 1024);
+                    input_fifo->read((uint8_t *)&cadu, is_uhrit ? 2048 : 1024);
 
                 std::vector<::lrit::LRITFile> files = lrit_demux.work(cadu);
 
