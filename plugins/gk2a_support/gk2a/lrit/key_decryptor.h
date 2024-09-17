@@ -4,7 +4,7 @@
 
 namespace gk2a
 {
-    namespace crypto
+    namespace lrit
     {
         bool decrypt_key_file(std::string encrypted, std::string mac_address, std::string decrypted);
     }

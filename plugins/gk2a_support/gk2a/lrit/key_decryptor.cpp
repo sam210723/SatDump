@@ -12,7 +12,7 @@ extern "C"
 
 namespace gk2a
 {
-    namespace crypto
+    namespace lrit
     {
         std::string to_hex_str(uint8_t *array, int len)
         {
@@ -117,5 +117,5 @@ namespace gk2a
 
             return false;
         }
-    } // namespace crypto
-} // gk2a
+    }
+}
