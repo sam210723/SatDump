@@ -1,4 +1,4 @@
-#include "module_gk2a_lrit_data_decoder.h"
+#include "module_gk2a_xrit_data_decoder.h"
 #include "logger.h"
 #include "lrit_header.h"
 #include <fstream>
@@ -15,9 +15,9 @@ extern "C"
 
 namespace gk2a
 {
-    namespace lrit
+    namespace xrit
     {
-        void GK2ALRITDataDecoderModule::saveImageP(GK2AxRITProductMeta meta, image::Image img)
+        void GK2AxRITDataDecoderModule::saveImageP(GK2AxRITProductMeta meta, image::Image img)
         {
             if (meta.channel == "" || meta.satellite_name == "" || meta.satellite_short_name == "" || meta.scan_time == 0)
                 image::save_img(img, std::string(directory + "/IMAGES/Unknown/" + meta.filename).c_str());
@@ -25,7 +25,7 @@ namespace gk2a
                 productizer.saveImage(img, img.depth() /*this is what the calibration uses!*/, directory + "/IMAGES", meta.satellite_name, meta.satellite_short_name, meta.channel, meta.scan_time, "", meta.image_navigation_record.get(), meta.image_data_function_record.get());
         }
 
-        void GK2ALRITDataDecoderModule::processLRITFile(::lrit::LRITFile &file)
+        void GK2AxRITDataDecoderModule::processLRITFile(::lrit::LRITFile &file)
         {
             std::string current_filename = file.filename;
 
@@ -272,5 +272,5 @@ namespace gk2a
                 fileo.close();
             }
         }
-    } // namespace avhrr
-} // namespace metop
+    } // namespace xrit
+} // namespace gk2a

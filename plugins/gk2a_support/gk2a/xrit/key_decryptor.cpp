@@ -12,7 +12,7 @@ extern "C"
 
 namespace gk2a
 {
-    namespace lrit
+    namespace xrit
     {
         std::string to_hex_str(uint8_t *array, int len)
         {

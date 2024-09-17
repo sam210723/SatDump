@@ -7,14 +7,15 @@
 
 namespace gk2a
 {
-    namespace lrit
+    namespace xrit
     {
-        class GK2ALRITDataDecoderModule : public ProcessingModule
+        class GK2AxRITDataDecoderModule : public ProcessingModule
         {
         protected:
             std::atomic<uint64_t> filesize;
             std::atomic<uint64_t> progress;
 
+            bool is_uhrit;
             bool write_images;
             bool write_additional;
             bool write_unknown;
@@ -51,8 +52,8 @@ namespace gk2a
             void saveImageP(GK2AxRITProductMeta meta, image::Image img);
 
         public:
-            GK2ALRITDataDecoderModule(std::string input_file, std::string output_file_hint, nlohmann::json parameters);
-            ~GK2ALRITDataDecoderModule();
+            GK2AxRITDataDecoderModule(std::string input_file, std::string output_file_hint, nlohmann::json parameters);
+            ~GK2AxRITDataDecoderModule();
             void process();
             void drawUI(bool window);
             std::vector<ModuleDataType> getInputTypes();
@@ -64,5 +65,5 @@ namespace gk2a
             static std::vector<std::string> getParameters();
             static std::shared_ptr<ProcessingModule> getInstance(std::string input_file, std::string output_file_hint, nlohmann::json parameters);
         };
-    } // namespace avhrr
-} // namespace metop
+    } // namespace xrit
+} // namespace gk2a

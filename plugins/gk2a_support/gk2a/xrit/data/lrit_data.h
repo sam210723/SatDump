@@ -11,7 +11,7 @@
 
 namespace gk2a
 {
-    namespace lrit
+    namespace xrit
     {
         struct GK2AxRITProductMeta
         {

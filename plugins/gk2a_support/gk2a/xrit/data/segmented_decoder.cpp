@@ -3,7 +3,7 @@
 
 namespace gk2a
 {
-    namespace lrit
+    namespace xrit
     {
         SegmentedLRITImageDecoder::SegmentedLRITImageDecoder()
         {

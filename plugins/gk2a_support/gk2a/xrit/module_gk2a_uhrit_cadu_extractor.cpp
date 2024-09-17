@@ -12,7 +12,7 @@ uint64_t getFilesize(std::string filepath);
 
 namespace gk2a
 {
-    namespace uhrit
+    namespace xrit
     {
         const uint8_t CADU_HEADER[] = {0x1a, 0xcf, 0xfc, 0x1d};
 
@@ -175,5 +175,5 @@ namespace gk2a
         {
             return std::make_shared<GK2AUHRITCADUextractor>(input_file, output_file_hint, parameters);
         }
-    } // namespace uhrit
+    } // namespace xrit
 } // namespace gk2a

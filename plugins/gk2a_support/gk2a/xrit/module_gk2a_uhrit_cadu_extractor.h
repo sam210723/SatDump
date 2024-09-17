@@ -6,7 +6,7 @@
 
 namespace gk2a
 {
-    namespace uhrit
+    namespace xrit
     {
         class GK2AUHRITCADUextractor : public ProcessingModule
         {
@@ -37,5 +37,5 @@ namespace gk2a
             static std::vector<std::string> getParameters();
             static std::shared_ptr<ProcessingModule> getInstance(std::string input_file, std::string output_file_hint, nlohmann::json parameters);
         };
-    } // namespace uhrit
+    } // namespace xrit
 } // namespace gk2a

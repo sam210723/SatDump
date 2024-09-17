@@ -66,7 +66,8 @@
                 }
             },
             "products": {
-                "gk2a_lrit_data_decoder": {
+                "gk2a_xrit_data_decoder": {
+                    "is_uhrit":  false,
                     "write_images": true,
                     "write_additional": true,
                     "write_unknown": true
@@ -196,7 +197,8 @@
                 }
             },
             "products": {
-                "gk2a_lrit_data_decoder": {
+                "gk2a_xrit_data_decoder": {
+                    "is_uhrit":  false,
                     "write_images": true,
                     "write_additional": true,
                     "write_unknown": true
@@ -278,6 +280,14 @@
             },
             "cadu": {
                 "gk2a_uhrit_cadu_extractor": {}
+            },
+            "products": {
+                "gk2a_xrit_data_decoder": {
+                    "is_uhrit":  true,
+                    "write_images": true,
+                    "write_additional": true,
+                    "write_unknown": true
+                }
             }
         }
     }

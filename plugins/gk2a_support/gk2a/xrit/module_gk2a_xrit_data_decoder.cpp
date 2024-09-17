@@ -1,4 +1,4 @@
-#include "module_gk2a_lrit_data_decoder.h"
+#include "module_gk2a_xrit_data_decoder.h"
 #include <fstream>
 #include "logger.h"
 #include <filesystem>
@@ -15,9 +15,10 @@
 
 namespace gk2a
 {
-    namespace lrit
+    namespace xrit
     {
-        GK2ALRITDataDecoderModule::GK2ALRITDataDecoderModule(std::string input_file, std::string output_file_hint, nlohmann::json parameters) : ProcessingModule(input_file, output_file_hint, parameters),
+        GK2AxRITDataDecoderModule::GK2AxRITDataDecoderModule(std::string input_file, std::string output_file_hint, nlohmann::json parameters) : ProcessingModule(input_file, output_file_hint, parameters),
+                                                                                                                                                is_uhrit(parameters["is_uhrit"].get<bool>()),
                                                                                                                                                 write_images(parameters["write_images"].get<bool>()),
                                                                                                                                                 write_additional(parameters["write_additional"].get<bool>()),
                                                                                                                                                 write_unknown(parameters["write_unknown"].get<bool>()),
@@ -25,17 +26,17 @@ namespace gk2a
         {
         }
 
-        std::vector<ModuleDataType> GK2ALRITDataDecoderModule::getInputTypes()
+        std::vector<ModuleDataType> GK2AxRITDataDecoderModule::getInputTypes()
         {
             return {DATA_FILE, DATA_STREAM};
         }
 
-        std::vector<ModuleDataType> GK2ALRITDataDecoderModule::getOutputTypes()
+        std::vector<ModuleDataType> GK2AxRITDataDecoderModule::getOutputTypes()
         {
             return {DATA_FILE};
         }
 
-        GK2ALRITDataDecoderModule::~GK2ALRITDataDecoderModule()
+        GK2AxRITDataDecoderModule::~GK2AxRITDataDecoderModule()
         {
             for (auto &decMap : all_wip_images)
             {
@@ -48,7 +49,7 @@ namespace gk2a
             }
         }
 
-        void GK2ALRITDataDecoderModule::process()
+        void GK2AxRITDataDecoderModule::process()
         {
             std::ifstream data_in;
 
@@ -245,9 +246,9 @@ namespace gk2a
                     saveImageP(segmentedDecoder.second.meta, segmentedDecoder.second.image);
         }
 
-        void GK2ALRITDataDecoderModule::drawUI(bool window)
+        void GK2AxRITDataDecoderModule::drawUI(bool window)
         {
-            ImGui::Begin("GK-2A LRIT Data Decoder", NULL, window ? 0 : NOWINDOW_FLAGS);
+            ImGui::Begin("GK-2A xRIT Data Decoder", NULL, window ? 0 : NOWINDOW_FLAGS);
 
             if (ImGui::BeginTabBar("Images TabBar", ImGuiTabBarFlags_None))
             {
@@ -315,19 +316,19 @@ namespace gk2a
             ImGui::End();
         }
 
-        std::string GK2ALRITDataDecoderModule::getID()
+        std::string GK2AxRITDataDecoderModule::getID()
         {
-            return "gk2a_lrit_data_decoder";
+            return "gk2a_xrit_data_decoder";
         }
 
-        std::vector<std::string> GK2ALRITDataDecoderModule::getParameters()
+        std::vector<std::string> GK2AxRITDataDecoderModule::getParameters()
         {
-            return {"write_images", "write_additional", "write_unknown"};
+            return {"is_uhrit", "write_images", "write_additional", "write_unknown"};
         }
 
-        std::shared_ptr<ProcessingModule> GK2ALRITDataDecoderModule::getInstance(std::string input_file, std::string output_file_hint, nlohmann::json parameters)
+        std::shared_ptr<ProcessingModule> GK2AxRITDataDecoderModule::getInstance(std::string input_file, std::string output_file_hint, nlohmann::json parameters)
         {
-            return std::make_shared<GK2ALRITDataDecoderModule>(input_file, output_file_hint, parameters);
+            return std::make_shared<GK2AxRITDataDecoderModule>(input_file, output_file_hint, parameters);
         }
-    } // namespace avhrr
-} // namespace metop
+    } // namespace xrit
+} // namespace gk2a
