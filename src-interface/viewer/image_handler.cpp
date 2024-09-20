@@ -51,8 +51,8 @@ namespace satdump
             select_image_str += "Channel " + img.channel_name + '\0';
             channel_numbers.push_back(img.channel_name);
             radiance_ranges.push_back(products->get_calibration_default_radiance_range(i));
-            temp_ranges.push_back({ radiance_to_temperature(radiance_ranges[i].first, products->get_wavenumber(i)),
-                radiance_to_temperature(radiance_ranges[i].second, products->get_wavenumber(i)) });
+            temp_ranges.push_back({radiance_to_temperature(radiance_ranges[i].first, products->get_wavenumber(i)),
+                                   radiance_to_temperature(radiance_ranges[i].second, products->get_wavenumber(i))});
         }
 
         // generate scale iamge
@@ -97,12 +97,12 @@ namespace satdump
         {
             if (active_channel_calibrated && products->has_calibation())
             {
-                if(products->get_calibration_type(active_channel_id) && is_temp)
+                if (products->get_calibration_type(active_channel_id) && is_temp)
                     current_image = products->get_calibrated_image(select_image_id - 1, &rgb_progress,
-                        ImageProducts::CALIB_VTYPE_TEMPERATURE, temp_ranges[select_image_id - 1]);
+                                                                   ImageProducts::CALIB_VTYPE_TEMPERATURE, temp_ranges[select_image_id - 1]);
                 else
                     current_image = products->get_calibrated_image(select_image_id - 1, &rgb_progress,
-                        ImageProducts::CALIB_VTYPE_AUTO, radiance_ranges[select_image_id - 1]);
+                                                                   ImageProducts::CALIB_VTYPE_AUTO, radiance_ranges[select_image_id - 1]);
                 update_needed = false;
             }
             else
@@ -242,6 +242,7 @@ namespace satdump
         {
             if (active_channel_id >= 0)
             {
+                y+=1;
                 if (rotate_image)
                 {
                     x = current_image.width() - 1 - x;
@@ -309,24 +310,30 @@ namespace satdump
                                  { 
                     async_image_mutex.lock();
                     logger->info("Generating RGB Composite");
-                    satdump::ImageCompositeCfg cfg;
+                    satdump::ImageCompositeCfg cfg; 
                     cfg.equation = rgb_compo_cfg.equation;
                     cfg.lut = rgb_compo_cfg.lut;
                     cfg.channels = rgb_compo_cfg.channels;
                     cfg.lua = rgb_compo_cfg.lua;
                     cfg.cpp = rgb_compo_cfg.cpp;
                     cfg.vars = rgb_compo_cfg.vars;
-                    cfg.calib_cfg = rgb_compo_cfg.calib_cfg;
+                    cfg.calib_cfg.clear();
 
-                    // median_blur = rgb_compo_cfg.median_blur;
-                    // despeckle = rgb_compo_cfg.despeckle;
-                    equalize_image = rgb_compo_cfg.equalize;
-                    individual_equalize_image = rgb_compo_cfg.individual_equalize;
-                    invert_image = rgb_compo_cfg.invert;
-                    normalize_image = rgb_compo_cfg.normalize;
-                    white_balance_image = rgb_compo_cfg.white_balance;
-                    remove_background = rgb_compo_cfg.remove_background;
-                    using_lut = rgb_compo_cfg.apply_lut;
+                    if(select_rgb_presets >= 0) 
+                    {
+                        // median_blur = rgb_compo_cfg.median_blur;
+                        // despeckle = rgb_compo_cfg.despeckle;
+                        equalize_image = rgb_compo_cfg.equalize;
+                        individual_equalize_image = rgb_compo_cfg.individual_equalize;
+                        invert_image = rgb_compo_cfg.invert;
+                        normalize_image = rgb_compo_cfg.normalize;
+                        white_balance_image = rgb_compo_cfg.white_balance;
+                        remove_background = rgb_compo_cfg.remove_background;
+                        using_lut = rgb_compo_cfg.apply_lut;
+                        
+                        // Test
+                        cfg.calib_cfg = rgb_compo_cfg.calib_cfg;
+                    }
 
                     rgb_image = satdump::make_composite_from_product(*products, cfg, &rgb_progress, &current_timestamps, &current_proj_metadata);
                     select_image_id = 0;
@@ -373,14 +380,14 @@ namespace satdump
                 if (products->get_wavenumber(active_channel_id) != -1)
                 {
                     ImGui::BeginTooltip();
-                    ImGui::Text("Wavenumber : %f cm^-1", products->get_wavenumber(active_channel_id));
+                    ImGui::Text("Wavenumber : %f cm\u207b\u00b9", products->get_wavenumber(active_channel_id));
                     double wl_nm = 1e7 / products->get_wavenumber(active_channel_id);
                     double frequency = 299792458.0 / (wl_nm * 10e-10);
 
                     if (wl_nm < 1e3)
                         ImGui::Text("Wavelength : %f nm", wl_nm);
                     else if (wl_nm < 1e6)
-                        ImGui::Text("Wavelength : %f um", wl_nm / 1e3);
+                        ImGui::Text("Wavelength : %f µm", wl_nm / 1e3);
                     else if (wl_nm < 1e9)
                         ImGui::Text("Wavelength : %f mm", wl_nm / 1e6);
                     else
@@ -445,14 +452,13 @@ namespace satdump
                     ImGui::Begin("Display Range Control", &range_window, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
                     ImGui::SetWindowSize(ImVec2(200 * ui_scale, 115 * ui_scale));
                     bool buff = false;
-                    std::pair<double, double> &this_range = products->get_calibration_type(active_channel_id) && is_temp ?
-                        temp_ranges[active_channel_id] : radiance_ranges[active_channel_id];
+                    std::pair<double, double> &this_range = products->get_calibration_type(active_channel_id) && is_temp ? temp_ranges[active_channel_id] : radiance_ranges[active_channel_id];
                     double tmp_min = (this_range.first * (products->get_calibration_type(active_channel_id) ? 1 : 100));
                     double tmp_max = (this_range.second * (products->get_calibration_type(active_channel_id) ? 1 : 100));
                     ImGui::SetNextItemWidth(120 * ui_scale);
-                    buff |= ImGui::InputDouble("Minimum", &tmp_min, 0, 0, is_temp && products->get_calibration_type(active_channel_id) ? "%.1f K" : (products->get_calibration_type(active_channel_id) ? "%.2f W·sr-1·m-2" : "%.2f%% Albedo"), ImGuiInputTextFlags_EnterReturnsTrue);
+                    buff |= ImGui::InputDouble("Minimum", &tmp_min, 0, 0, is_temp && products->get_calibration_type(active_channel_id) ? "%.1f K" : (products->get_calibration_type(active_channel_id) ? "%.2f W·sr\u207b\u00b9·m\u207b\u00b2" : "%.2f%% Albedo"), ImGuiInputTextFlags_EnterReturnsTrue);
                     ImGui::SetNextItemWidth(120 * ui_scale);
-                    buff |= ImGui::InputDouble("Maximum", &tmp_max, 0, 0, is_temp && products->get_calibration_type(active_channel_id) ? "%.1f K" : (products->get_calibration_type(active_channel_id) ? "%.2f W·sr-1·m-2" : "%.2f%% Albedo"), ImGuiInputTextFlags_EnterReturnsTrue);
+                    buff |= ImGui::InputDouble("Maximum", &tmp_max, 0, 0, is_temp && products->get_calibration_type(active_channel_id) ? "%.1f K" : (products->get_calibration_type(active_channel_id) ? "%.2f W·sr\u207b\u00b9·m\u207b\u00b2" : "%.2f%% Albedo"), ImGuiInputTextFlags_EnterReturnsTrue);
                     if (buff)
                     {
                         this_range.first = (tmp_min / (products->get_calibration_type(active_channel_id) ? 1 : 100));
@@ -462,10 +468,9 @@ namespace satdump
                     }
                     if (ImGui::Button("Default"))
                     {
-                        this_range = is_temp && products->get_calibration_type(active_channel_id) ?
-                            std::pair<double, double>{ radiance_to_temperature(products->get_calibration_default_radiance_range(active_channel_id).first, products->get_wavenumber(active_channel_id)),
-                                                       radiance_to_temperature(products->get_calibration_default_radiance_range(active_channel_id).second, products->get_wavenumber(active_channel_id))}
-                                    : products->get_calibration_default_radiance_range(active_channel_id);
+                        this_range = is_temp && products->get_calibration_type(active_channel_id) ? std::pair<double, double>{radiance_to_temperature(products->get_calibration_default_radiance_range(active_channel_id).first, products->get_wavenumber(active_channel_id)),
+                                                                                                                              radiance_to_temperature(products->get_calibration_default_radiance_range(active_channel_id).second, products->get_wavenumber(active_channel_id))}
+                                                                                                  : products->get_calibration_default_radiance_range(active_channel_id);
                         update_needed = true;
                         asyncUpdate();
                     }
@@ -474,11 +479,11 @@ namespace satdump
 
                 if (show_scale && active_channel_calibrated && products->get_calibration_type(active_channel_id))
                 {
-                    if(scale_has_update)
+                    if (scale_has_update)
                         updateImageTexture(scale_texture_id, scale_buffer, 25, 512);
 
                     int w = ImGui::GetWindowSize()[0];
-                    if(ImGui::Begin("Scale##scale_window", &show_scale, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+                    if (ImGui::Begin("Scale##scale_window", &show_scale, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
                     {
                         ImGui::SetWindowSize(ImVec2(100 * ui_scale, 520 * ui_scale));
                         ImGui::SetWindowPos(ImVec2(w + 20 * ui_scale, 50 * ui_scale), ImGuiCond_Once);
@@ -506,12 +511,12 @@ namespace satdump
                             ImGui::SetCursorPosY(start_y + i * step_height);
                             ImGui::Text("%.3f", actual_ranges.second - i * step_difference);
                             draw_list->AddLine(ImVec2(graduation_start_x, graduation_start_y + i * step_height),
-                                ImVec2(graduation_start_x + graduation_length, graduation_start_y + i * step_height),
-                                ImGui::ColorConvertFloat4ToU32(imgui_style.Colors[ImGuiCol_TextDisabled]), 1.0 * ui_scale);
+                                               ImVec2(graduation_start_x + graduation_length, graduation_start_y + i * step_height),
+                                               ImGui::ColorConvertFloat4ToU32(imgui_style.Colors[ImGuiCol_TextDisabled]), 1.0 * ui_scale);
                         }
 
                         ImGui::EndGroup();
-                        ImGui::Text(is_temp ? " [K]" : " [W·sr-1·m-2]");
+                        ImGui::Text(is_temp ? " [K]" : " [W·sr\u207b\u00b9·m\u207b\u00b2]");
                     }
                     ImGui::End();
                 }
@@ -618,7 +623,8 @@ namespace satdump
             if (ImGui::Button("Save"))
             {
                 handler_thread_pool.clear_queue();
-                handler_thread_pool.push([this](int) {
+                handler_thread_pool.push([this](int)
+                                         {
                     async_image_mutex.lock();
                     is_updating = true;
                     logger->info("Saving Image...");
@@ -857,7 +863,7 @@ namespace satdump
         scale_image = image::Image(16, 25, 512, 3);
         for (size_t i = 0; i < 512; i++)
         {
-            std::vector<double> color = { double((511 - i) << 7) / 65535.0, double((511 - i) << 7) / 65535.0, double((511 - i) << 7) / 65535.0 };
+            std::vector<double> color = {double((511 - i) << 7) / 65535.0, double((511 - i) << 7) / 65535.0, double((511 - i) << 7) / 65535.0};
             if (using_lut)
             {
                 uint16_t val = color[0] * lut_image.width();
