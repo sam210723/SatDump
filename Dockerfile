@@ -25,6 +25,12 @@ RUN cmake -B build \
 ARG DEBIAN_IMAGE_TAG=bookworm
 FROM debian:${DEBIAN_IMAGE_TAG} AS runner
 
+LABEL org.opencontainers.image.title="SatDump" \
+      org.opencontainers.image.description="A generic satellite data processing software" \
+      org.opencontainers.image.source="https://github.com/SatDump/SatDump" \
+      org.opencontainers.image.url="https://www.satdump.org" \
+      org.opencontainers.image.documentation="https://docs.satdump.org"
+
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
