@@ -2,14 +2,16 @@ ARG DEBIAN_IMAGE_TAG=bookworm
 FROM debian:${DEBIAN_IMAGE_TAG} AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG CMAKE_BUILD_PARALLEL_LEVEL
-ENV TZ=Etc/UTC
+ARG CMAKE_BUILD_PARALLEL_LEVEL=2
+ENV TZ=Etc/UTC \
+    CMAKE_BUILD_PARALLEL_LEVEL=${CMAKE_BUILD_PARALLEL_LEVEL}
 
 WORKDIR /usr/local/src/
 COPY packages.builder .
 RUN apt -y update && \
     apt -y upgrade && \
-    xargs -a packages.builder apt install --no-install-recommends -qy
+    xargs -a packages.builder apt install --no-install-recommends -qy && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/local/src/satdump
 COPY . .
@@ -40,6 +42,7 @@ RUN apt -y update && \
     apt -y upgrade && \
     xargs -a /usr/local/src/packages.runner apt install -qy && \
     apt install -qy /usr/local/src/satdump_*.deb && \
+    rm -f /usr/local/src/satdump_*.deb /usr/local/src/packages.runner && \
     rm -rf /var/lib/apt/lists/*
 
 # Add a user, possibility to map it to a user on the host to get the same uid & gid on files
@@ -52,6 +55,9 @@ RUN groupadd -r -g ${HOST_GID} satdump && \
             -s /bin/bash \
             -G audio,dialout,plugdev \
             -m \
-            satdump
+            satdump && \
+    chown satdump:satdump /srv
 USER satdump
 WORKDIR /srv
+
+ENTRYPOINT ["satdump"]
