@@ -1,0 +1,15 @@
+apiVersion: v2
+name: satdump
+description: A generic satellite data processing software
+type: application
+version: 0.1.0
+appVersion: "2.0.0-alpha"
+home: https://www.satdump.org
+icon: https://www.satdump.org/assets/icon.png
+sources:
+  - https://github.com/SatDump/SatDump
+keywords:
+  - satdump
+  - satellite
+  - sdr
+  - radio

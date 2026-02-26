@@ -1,0 +1,39 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: satdump
+  tag: latest
+  pullPolicy: Always
+
+args: []
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  existingClaim: ""
+
+# Enable for USB device access
+privileged: false
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+env:
+  TZ: Etc/UTC
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
